@@ -1,20 +1,22 @@
 var http = require('http');
 const { Client } = require('pg');
 
+console.log(process.env.DATABASE_URL);
+
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
+    connectionString: process.env.DATABASE_URL,
+    ssl: true
 });
 
 client.connect();
 
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  client.end();
-});
+// client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+//     if (err) { console.log(err); return; }
+//     for (let row of res.rows) {
+//         console.log(JSON.stringify(row));
+//     }
+//     client.end();
+// });
 
 // const PORT = process.env.PORT || 3000
 
