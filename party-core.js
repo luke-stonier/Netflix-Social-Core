@@ -9,7 +9,7 @@ const client = new Client({
 client.connect();
 
 client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-    if (err) throw err;
+    if (err) { console.log(err); return; }
     for (let row of res.rows) {
         console.log(JSON.stringify(row));
     }
