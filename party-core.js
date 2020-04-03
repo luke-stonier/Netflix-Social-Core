@@ -41,7 +41,7 @@ app.listen(PORT, () => {
 function CreateGroup(groupName) {
     console.log(`Creating group ${groupName}`);
     var serverAddress = "https://watch-hub.herokuapp.com/"
-    var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', ${serverAddress}, 0);`;
+    var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
     var rows = MakeSqlQuery(sql);
     console.log(rows);
     return rows;
