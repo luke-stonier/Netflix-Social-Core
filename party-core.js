@@ -15,7 +15,7 @@ app.get('/:groupName', async function(req, res) {
     var groupName = req.params.groupName;
     if (!groupName) { res.sendStatus(400); return; }
     console.log(`Get group name info for ${groupName}`);
-    var sql = `SELECT * FROM GroupInstances WHERE groupname="${groupName}";`;
+    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = MakeSqlQuery(sql);
     console.log(rows);
 
