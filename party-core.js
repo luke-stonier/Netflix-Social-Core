@@ -20,7 +20,7 @@ app.get('/:groupName', async function(req, res) {
     console.log(rows);
 
     if (!rows || rows.length == 0) {
-        //CreateGroup(groupName);
+        var createdRow = CreateGroup(groupName);
         res.sendStatus(204);
         return;
     }
@@ -39,10 +39,12 @@ app.listen(PORT, () => {
 });
 
 function CreateGroup(groupName) {
+    console.log(`Creating group ${groupName}`);
     var serverAddress = "https://watch-hub.herokuapp.com/"
-    var sql = `INSERT INTO GroupInstances (GroupName, server) VALUES ('${groupName}', ${serverAddress});`;
+    var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', ${serverAddress}, 0);`;
     var rows = MakeSqlQuery(sql);
     console.log(rows);
+    return rows;
 }
 
 function SetClientCount(groupName, clietnCount) {
