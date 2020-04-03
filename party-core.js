@@ -1,7 +1,7 @@
 var http = require('http');
 const { Client } = require('pg');
 
-const secureConnectionString = `${process.env.DATABASE_URL}sslmode=require`;
+const secureConnectionString = `${process.env.DATABASE_URL}/sslmode=require`;
 console.log(secureConnectionString);
 
 const client = new Client({
