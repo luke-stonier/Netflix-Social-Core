@@ -16,11 +16,16 @@ client.connect().catch((error) => {
 });
 
 console.log("DO QUERY")
-client.query('SELECT * FROM d5ugoj4cvigbbi.GroupInstances;', (err, res) => {
+client.query('SELECT * FROM GroupInstances;', (err, res) => {
     if (err) { console.log("error: " + err); return; }
+    if (!res) { console.log("no result"); return;}
+
+    console.log(`got ${res.rows.length} rows`);
+
     for (let row of res.rows) {
         console.log(JSON.stringify(row));
     }
+
     client.end();
 });
 
