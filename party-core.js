@@ -15,8 +15,9 @@ client.connect().catch((error) => {
     console.log(error);
 });
 
-client.query('SELECT * FROM GroupInstances;', (err, res) => {
-    if (err) { console.log(err); return; }
+console.log("DO QUERY")
+client.query('SELECT * FROM d5ugoj4cvigbbi.GroupInstances;', (err, res) => {
+    if (err) { console.log("error: " + err); return; }
     for (let row of res.rows) {
         console.log(JSON.stringify(row));
     }
