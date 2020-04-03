@@ -1,8 +1,8 @@
-var http = require('http');
+const express = require('express');
 const { Client } = require('pg');
-
+const app = express();
 const secureConnectionString = `${process.env.DATABASE_URL}`;
-console.log(secureConnectionString);
+const PORT = process.env.PORT || 3001
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" // Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
 
@@ -11,31 +11,29 @@ const client = new Client({
     ssl: true
 });
 
-client.connect().catch((error) => {
-    console.log(error);
+app.get('/', (req, res) => {
+    client.query('SELECT * FROM GroupInstances;', (err, res) => {
+        if (err) { console.log("error: " + err); return; }
+        if (!res) { console.log("no result"); return; }
+    
+        console.log(`got ${res.rows.length} rows`);
+    
+        for (let row of res.rows) {
+            console.log(JSON.stringify(row));
+        }
+    
+        client.end();
+    });
+    
+    res.send();
 });
 
-console.log("DO QUERY")
-client.query('SELECT * FROM GroupInstances;', (err, res) => {
-    if (err) { console.log("error: " + err); return; }
-    if (!res) { console.log("no result"); return;}
+app.listen(PORT, () => {
+    console.log((new Date()) + ' Server is listening on port ' + PORT);
 
-    console.log(`got ${res.rows.length} rows`);
-
-    for (let row of res.rows) {
-        console.log(JSON.stringify(row));
-    }
-
-    client.end();
+    client.connect().then(() => {
+        console.log('Postgres client connected');
+    }).catch((error) => {
+        console.log(error);
+    });
 });
-
-// const PORT = process.env.PORT || 3000
-
-// var server = http.createServer(function (request, response) {
-//     console.log((new Date()) + ' Received request for ' + request.url);
-//     response.writeHead(200);
-//     response.end();
-// });
-// server.listen(PORT, function () {
-//     console.log((new Date()) + ' Server is listening on port ' + PORT);
-// });
