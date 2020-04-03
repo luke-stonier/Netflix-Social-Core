@@ -19,7 +19,7 @@ app.get('/:groupName', async function(req, res) {
     var rows = MakeSqlQuery(sql);
     console.log(rows);
 
-    if (rows.length == 0) {
+    if (!rows || rows.length == 0) {
         //CreateGroup(groupName);
         res.sendStatus(204);
         return;
