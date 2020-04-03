@@ -69,8 +69,6 @@ function MakeSqlQuery(sql) {
             console.log("no result");
             return;
         }
-    
-        client.end();
 
         return res.rows;
     });
