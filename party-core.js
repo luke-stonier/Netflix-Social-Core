@@ -70,6 +70,8 @@ function MakeSqlQuery(sql) {
             return;
         }
 
+        console.log(JSON.stringify(res));
+
         return res.rows;
     });
 }
