@@ -61,7 +61,7 @@ function MakeSqlQuery(sql) {
     if (!client) { return; }
     client.query(sql, (err, res) => {
         if (err) {
-            console.log("error: " + err);
+            console.log(sql + " -> " + err);
             return;
         }
 
