@@ -17,7 +17,7 @@ app.get('/:groupName', async function(req, res) {
     console.log(`Get group name info for ${groupName}`);
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = MakeSqlQuery(sql);
-    console.log(rows);
+    console.log("rows->" + rows);
 
     if (!rows || rows.length == 0) {
         var createdRow = CreateGroup(groupName);
@@ -71,7 +71,7 @@ function MakeSqlQuery(sql) {
             return;
         }
 
-        console.log(JSON.stringify(res));
+        console.log("res->" + JSON.stringify(res));
 
         return res.rows;
     });
