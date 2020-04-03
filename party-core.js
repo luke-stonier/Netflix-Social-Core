@@ -15,13 +15,13 @@ client.connect().catch((error) => {
     console.log(error);
 });
 
-// client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-//     if (err) { console.log(err); return; }
-//     for (let row of res.rows) {
-//         console.log(JSON.stringify(row));
-//     }
-//     client.end();
-// });
+client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+    if (err) { console.log(err); return; }
+    for (let row of res.rows) {
+        console.log(JSON.stringify(row));
+    }
+    client.end();
+});
 
 // const PORT = process.env.PORT || 3000
 
