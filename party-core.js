@@ -8,7 +8,9 @@ const client = new Client({
     ssl: true
 });
 
-client.connect();
+client.connect().catch((error) => {
+    console.log(error);
+});
 
 // client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
 //     if (err) { console.log(err); return; }
