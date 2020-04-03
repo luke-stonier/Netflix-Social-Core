@@ -2,6 +2,7 @@ const express = require('express');
 const { Client } = require('pg');
 const app = express();
 const secureConnectionString = `${process.env.DATABASE_URL}`;
+console.log(secureConnectionString);
 const PORT = process.env.PORT || 3001
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" // Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
