@@ -59,6 +59,7 @@ function RemoveGroup(groupname) {
 
 function MakeSqlQuery(sql) {
     if (!client) { return; }
+    console.log(`running ${sql}`);
     client.query(sql, (err, res) => {
         if (err) {
             console.log(sql + " -> " + err);
