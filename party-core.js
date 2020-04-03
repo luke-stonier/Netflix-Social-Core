@@ -4,10 +4,11 @@ const { Client } = require('pg');
 const secureConnectionString = `${process.env.DATABASE_URL}/sslmode=require`;
 console.log(secureConnectionString);
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" // Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
+
 const client = new Client({
     connectionString: secureConnectionString,
-    ssl: true,
-    rejectUnauthorized: false
+    ssl: true
 });
 
 client.connect().catch((error) => {
