@@ -24,7 +24,7 @@ app.listen(PORT, () => {
 
 app.post('/add', async function(req, res) {
     console.log(JSON.stringify(req.body));
-    res.statusCode(204);
+    res.sendStatus(204);
     return;
     var WatchHubAddress = req.body.address;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
