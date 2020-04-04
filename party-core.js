@@ -25,6 +25,7 @@ app.listen(PORT, () => {
 app.get('/add/watch-hub', async function(req, res) {
     // var WatchHubAddress = req.
     console.log(`add address -> ${req.ip}`);
+    console.log(JSON.stringify(req));
     return;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
