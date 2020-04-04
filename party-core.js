@@ -22,8 +22,8 @@ app.listen(PORT, () => {
     });
 });
 
-app.get('/add/:WatchHubAddress', async function(req, res) {
-    var WatchHubAddress = req.params.WatchHubAddress;
+app.post('/add', async function(req, res) {
+    var WatchHubAddress = req.body.address;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     console.log(WatchHubAddress);
     res.sendStatus(200);
