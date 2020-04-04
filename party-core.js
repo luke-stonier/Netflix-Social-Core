@@ -22,8 +22,10 @@ app.listen(PORT, () => {
     });
 });
 
-app.get('/add/:WatchHubAddress', async function(req, res) {
-    var WatchHubAddress = req.params.WatchHubAddress;
+app.get('/add/watch-hub', async function(req, res) {
+    // var WatchHubAddress = req.
+    console.log(`add address -> ${req.ip}`);
+    return;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
     MakeSqlQuery(sql, (rows) => {
