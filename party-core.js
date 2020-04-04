@@ -1,7 +1,7 @@
 const express = require('express');
 const { Client } = require('pg');
 const app = express();
-const secureConnectionString = process.env.DATABASE_URL || "postgres://dotjltonbuuogh:6cf0a45121c8faf9e36872b95a04b99c9829d1718e8e29dd5b243102c86bb320@ec2-54-247-78-30.eu-west-1.compute.amazonaws.com:5432/d5ugoj4cvigbbi";
+const secureConnectionString = process.env.DATABASE_URL;
 console.log(secureConnectionString);
 const PORT = process.env.PORT || 3001
 
@@ -26,6 +26,7 @@ app.get('/add/:WatchHubAddress', async function(req, res) {
     var WatchHubAddress = req.params.WatchHubAddress;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     console.log(WatchHubAddress);
+    res.sendStatus(200);
     return;
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
     MakeSqlQuery(sql, (rows) => {
