@@ -1,11 +1,14 @@
 const express = require('express');
 const { Client } = require('pg');
 const app = express();
+const bodyParser = require('body-parser');
 const secureConnectionString = process.env.DATABASE_URL;
-console.log(secureConnectionString);
 const PORT = process.env.PORT || 3001
 
+app.use(bodyParser.json());
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" // Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
+console.log(secureConnectionString);
 
 const client = new Client({
     connectionString: secureConnectionString,
