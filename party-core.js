@@ -25,14 +25,14 @@ app.listen(PORT, () => {
     });
 });
 
-app.post('/add', async function(req, res) {
+app.post('/add', async function (req, res) {
     console.log(JSON.stringify(req.body));
     var WatchHubAddress = req.body.address;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     console.log(WatchHubAddress);
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
     var rows = await MakeSqlQuery(sql);
-    if(!rows || rows.length == 0) {
+    if (!rows || rows.length == 0) {
         var addSQL = `INSERT INTO availableservers (address) VALUES ('${WatchHubAddress}');`;
         await MakeSqlQuery(addSQL)
     }
@@ -40,7 +40,7 @@ app.post('/add', async function(req, res) {
     res.sendStatus(200);
 });
 
-app.get('/:groupName', async function(req, res) {
+app.get('/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
     if (!groupName) { res.sendStatus(400); return; }
     console.log(`Get group name info for ${groupName}`);
@@ -56,7 +56,7 @@ app.get('/:groupName', async function(req, res) {
     res.send(groupInstance);
 });
 
-app.delete('/:groupName', async function(req, res) {
+app.delete('/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
     if (!groupName) { res.sendStatus(400); return; }
     await RemoveGroup(groupName);
@@ -73,12 +73,14 @@ async function GetBestServer() {
     await instances.forEach(async (instance) => {
         var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
         var instanceData = await MakeSqlQuery(getInstanceData);
-        instanceData.foreach(groupInstance => {
-            if (!groupInstances[groupInstance.address])
-                groupInstances[groupInstance.address] = [];
+        if (instanceData && instanceData.length > 0) {
+            await instanceData.foreach(async (groupInstance) => {
+                if (!groupInstances[groupInstance.address])
+                    groupInstances[groupInstance.address] = [];
 
-            groupInstances[groupInstance.address].push(groupInstance);
-        });
+                groupInstances[groupInstance.address].push(groupInstance);
+            });
+        }
     });
 
     if (groupInstances.length == 0) {
