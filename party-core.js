@@ -75,7 +75,7 @@ async function GetBestServer() {
         var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
         var instanceData = await MakeSqlQuery(getInstanceData);
         if (instanceData && instanceData.length > 0) {
-            await instanceData.foreach(async (groupInstance) => {
+            await instanceData.forEach(async (groupInstance) => {
                 if (!groupInstances[groupInstance.address])
                     groupInstances[groupInstance.address] = [];
 
