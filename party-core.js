@@ -46,11 +46,13 @@ app.get('/:groupName', async function (req, res) {
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
+        console.log("Creating group as it doesnt exist");
         var group = await CreateGroup(groupName);
         res.send(group);
         return;
     }
 
+    console.log("Returning group info");
     var groupInstance = rows[0];
     res.send(groupInstance);
 });
@@ -87,15 +89,17 @@ async function GetBestServer() {
     }
 
     // check for the instance with the smallest count and return the address
+    var smallestCountServer;
+    groupInstances.foreach((instance) => {
+        console.log(instance);
+    });
     console.log(JSON.stringify(groupInstances));
     return `https://watch-hub.herokuapp.com`;
 }
 
 async function CreateGroup(groupName) {
-    console.log(`Creating group ${groupName}`);
     var serverAddress = await GetBestServer();
     console.log(`Using ${serverAddress} for group ${groupName}`);
-    return;
     var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
     await MakeSqlQuery(sql);
     return {
