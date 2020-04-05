@@ -72,17 +72,27 @@ app.delete('/:groupName', async function(req, res) {
     })
 });
 
+function GetBestServer(callback) {
+    // var serverAddress = "https://watch-hub.herokuapp.com/";
+    var getAllInstances = `SELECT * FROM availableservers WHERE 1;`;
+    MakeSqlQuery(getAllInstances, (rows) => {
+        console.log(JSON.stringify(rows));
+        // callback();
+    });
+}
+
 function CreateGroup(groupName, callback) {
     console.log(`Creating group ${groupName}`);
-    var serverAddress = "https://watch-hub.herokuapp.com/"
-    var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
-    MakeSqlQuery(sql, (rows) => {
-        callback({
-            groupname: groupName,
-            server: serverAddress,
-            clients: 0
-        });
-    }, () => {});
+    GetBestServer((serverAddress) => {
+        var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
+        MakeSqlQuery(sql, (rows) => {
+            callback({
+                groupname: groupName,
+                server: serverAddress,
+                clients: 0
+            });
+        }, () => {});
+    });
 }
 
 function SetClientCount(groupName, clietnCount) {
