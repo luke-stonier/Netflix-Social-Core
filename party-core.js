@@ -86,10 +86,10 @@ async function GetBestServer() {
         if (instanceData && instanceData.length > 0) {
             instanceData.forEach((groupInstance) => {
                 console.log(`${JSON.stringify(groupInstance)} adding to groupInstances`);
-                if (!groupInstances[groupInstance.address])
-                    groupInstances[groupInstance.address] = [];
+                if (!groupInstances[groupInstance.server])
+                    groupInstances[groupInstance.server] = [];
 
-                groupInstances[groupInstance.address].push(groupInstance);
+                groupInstances[groupInstance.server].push(groupInstance);
             });
         }
     });
