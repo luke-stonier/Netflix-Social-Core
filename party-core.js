@@ -76,6 +76,7 @@ async function GetBestServer() {
     if (!instances || instances.length == 0)
         return; // no available servers
 
+    console.log(`Instances available -> ${JSON.stringify(instances)}`);
     var groupInstances = [];
 
     await asyncForEach(instances, async (instance, index, array) => {
@@ -84,7 +85,7 @@ async function GetBestServer() {
         console.log("instance data-> " + JSON.stringify(instanceData));
         if (instanceData && instanceData.length > 0) {
             instanceData.forEach((groupInstance) => {
-                console.log(`group instance adding to groupInstances`);
+                console.log(`${JSON.stringify(groupInstance)} adding to groupInstances`);
                 if (!groupInstances[groupInstance.address])
                     groupInstances[groupInstance.address] = [];
 
