@@ -76,7 +76,7 @@ async function GetBestServer(callback) {
     // var serverAddress = "https://watch-hub.herokuapp.com/";
     var getAllInstances = `SELECT * FROM availableservers;`;
     MakeSqlQuery(getAllInstances, async (rows) => {
-        rows.forEach(element => {
+        rows.forEach(async (element) => {
             var getInstanceData = `SELECT * FROM groupinstances WHERE address='${element.address}';`;
             var instanceData = await client.query(getInstanceData);
             console.log(instanceData);
