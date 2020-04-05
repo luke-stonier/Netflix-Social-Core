@@ -30,8 +30,6 @@ app.post('/add', async function(req, res) {
     var WatchHubAddress = req.body.address;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     console.log(WatchHubAddress);
-    res.sendStatus(200);
-    return;
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
     MakeSqlQuery(sql, (rows) => {
         if(!rows || rows.length == 0) {
@@ -39,6 +37,7 @@ app.post('/add', async function(req, res) {
             MakeSqlQuery(addSQL, () => {
                 res.sendStatus(200);
             });
+            return;
         }
 
         res.sendStatus(200);
