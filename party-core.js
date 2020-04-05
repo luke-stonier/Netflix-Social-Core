@@ -31,19 +31,13 @@ app.post('/add', async function(req, res) {
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     console.log(WatchHubAddress);
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
-    MakeSqlQuery(sql, (rows) => {
-        if(!rows || rows.length == 0) {
-            var addSQL = `INSERT INTO availableservers (address) VALUES ('${WatchHubAddress}');`;
-            MakeSqlQuery(addSQL, () => {
-                res.sendStatus(200);
-            });
-            return;
-        }
+    var rows = await MakeSqlQuery(sql);
+    if(!rows || rows.length == 0) {
+        var addSQL = `INSERT INTO availableservers (address) VALUES ('${WatchHubAddress}');`;
+        await MakeSqlQuery(addSQL)
+    }
 
-        res.sendStatus(200);
-    }, () => {
-        res.sendStatus(400);
-    })
+    res.sendStatus(200);
 });
 
 app.get('/:groupName', async function(req, res) {
@@ -51,78 +45,58 @@ app.get('/:groupName', async function(req, res) {
     if (!groupName) { res.sendStatus(400); return; }
     console.log(`Get group name info for ${groupName}`);
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
-    await MakeSqlQuery(sql, async (rows) => {
-        if (!rows || rows.length == 0) {
-            await CreateGroup(groupName, (row) => {
-                res.send(row);
-            });
-            return;
-        }
+    var rows = await MakeSqlQuery(sql);
+    if (!rows || rows.length == 0) {
+        var group = await CreateGroup(groupName);
+        res.send(group);
+        return;
+    }
 
-        var groupInstance = rows[0];
-        res.send(groupInstance);
-    }, () => { res.sendStatus(400); });
+    var groupInstance = rows[0];
+    res.send(groupInstance);
 });
 
 app.delete('/:groupName', async function(req, res) {
     var groupName = req.params.groupName;
     if (!groupName) { res.sendStatus(400); return; }
-    RemoveGroup(groupName, () => {
-        res.sendStatus(200);
-    })
+    await RemoveGroup(groupName);
+    res.sendStatus(200);
 });
 
-async function GetBestServer(callback) {
-    // var serverAddress = "https://watch-hub.herokuapp.com/";
+async function GetBestServer() {
     var getAllInstances = `SELECT * FROM availableservers;`;
-    MakeSqlQuery(getAllInstances, async (rows) => {
-        rows.forEach(async (element) => {
-            var getInstanceData = `SELECT * FROM groupinstances WHERE server='${element.address}';`;
-            var instanceData = await client.query(getInstanceData);
-            console.log(instanceData);
-        });
-        // callback();
+    var instances = MakeSqlQuery(getAllInstances);
+    instances.forEach(async (instance) => {
+        var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
+        var instanceData = await client.query(getInstanceData);
+        console.log(instanceData.rows);
     });
 }
 
-async function CreateGroup(groupName, callback) {
+async function CreateGroup(groupName) {
     console.log(`Creating group ${groupName}`);
-    await GetBestServer(async(serverAddress) => {
-        var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
-        MakeSqlQuery(sql, (rows) => {
-            callback({
-                groupname: groupName,
-                server: serverAddress,
-                clients: 0
-            });
-        }, () => {});
-    });
+    var serverAddress = await GetBestServer();
+    var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
+    await MakeSqlQuery(sql);
+    return {
+        groupname: groupName,
+        server: serverAddress,
+        clients: 0
+    };
 }
 
-function SetClientCount(groupName, clietnCount) {
+async function SetClientCount(groupName, clietnCount) {
 
 }
 
-function RemoveGroup(groupname, callback) {
+async function RemoveGroup(groupname) {
     var sql = `DELETE FROM GroupInstances WHERE groupname='${groupname}';`;
-    MakeSqlQuery(sql, () => {
-        callback();
-    }, () => {});
+    await MakeSqlQuery(sql);
 }
 
-function MakeSqlQuery(sql, callback, errCallback) {
-    if (!client) { errCallback('No Client'); }
+async function MakeSqlQuery(sql) {
+    if (!client) { return; }
     console.log(`running ${sql}`);
-    client.query(sql, (err, res) => {
-        if (err) {
-            console.log(sql + " -> " + err);
-            errCallback(err);
-        }
-
-        if (!res) {
-            errCallback('No result');
-        }
-
-        callback(res.rows);
-    });
+    var res = await client.query(sql);
+    return res.rows;
 }
