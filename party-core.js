@@ -53,7 +53,7 @@ app.get('/:groupName', async function(req, res) {
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     await MakeSqlQuery(sql, (rows) => {
         if (!rows || rows.length == 0) {
-            CreateGroup(groupName, (row) => {
+            await CreateGroup(groupName, (row) => {
                 res.send(row);
             });
             return;
@@ -85,9 +85,9 @@ async function GetBestServer(callback) {
     });
 }
 
-function CreateGroup(groupName, callback) {
+async function CreateGroup(groupName, callback) {
     console.log(`Creating group ${groupName}`);
-    GetBestServer((serverAddress) => {
+    await GetBestServer((serverAddress) => {
         var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
         MakeSqlQuery(sql, (rows) => {
             callback({
