@@ -90,7 +90,7 @@ async function GetBestServer() {
 
     // check for the instance with the smallest count and return the address
     var smallestCountServer;
-    groupInstances.foreach((instance) => {
+    groupInstances.forEach((instance) => {
         console.log(instance);
     });
     console.log(JSON.stringify(groupInstances));
