@@ -2,7 +2,7 @@ const express = require('express');
 const { Client } = require('pg');
 const app = express();
 const bodyParser = require('body-parser');
-const secureConnectionString = process.env.DATABASE_URL;
+const secureConnectionString = process.env.DATABASE_URL || 'postgres://dotjltonbuuogh:6cf0a45121c8faf9e36872b95a04b99c9829d1718e8e29dd5b243102c86bb320@ec2-54-247-78-30.eu-west-1.compute.amazonaws.com:5432/d5ugoj4cvigbbi';
 const PORT = process.env.PORT || 3001
 
 app.use(bodyParser.json());
@@ -77,22 +77,22 @@ async function GetBestServer() {
         return; // no available servers
 
     console.log(`Instances available -> ${JSON.stringify(instances)}`);
-    var groupInstances = [];
+    var groupInstances = {};
 
     await asyncForEach(instances, async (instance, index, array) => {
         var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
         var instanceData = await MakeSqlQuery(getInstanceData);
-        console.log("instance data-> " + JSON.stringify(instanceData));
+        if (!instanceData || instanceData.length == 0)
+            groupInstances[instance.address] = 0;
+
         if (instanceData && instanceData.length > 0) {
             instanceData.forEach((groupInstance) => {
-                console.log(`${JSON.stringify(groupInstance)} adding to groupInstances`);
-                if (!groupInstances[groupInstance.server]) {
-                    console.log(`create group instance ${groupInstance.server}`);
-                    groupInstances[groupInstance.server] = {instances: []};
+                var addressKey = groupInstance.server;
+                if (!groupInstances[addressKey]) {
+                    groupInstances[addressKey] = 0;
                 }
 
-                console.log(`push group instance to ${groupInstance.server}`);
-                groupInstances[groupInstance.server].instances.push(groupInstance);
+                groupInstances[addressKey]++;
                 console.log("group instance in loop ->" + JSON.stringify(groupInstances));
             });
         }
@@ -107,10 +107,12 @@ async function GetBestServer() {
 
     // check for the instance with the smallest count and return the address
     var smallestCountServer;
-    groupInstances.forEach((instance) => {
-        console.log(instance);
+    Object.keys(groupInstances).forEach((instance) => {
+        if (!smallestCountServer || groupInstances[instance] < smallestCountServer.count)
+            smallestCountServer = { address: instance, count: groupInstances[instance]};
     });
-    return `https://watch-hub.herokuapp.com`;
+    console.log(smallestCountServer);
+    return smallestCountServer.address;
 }
 
 async function CreateGroup(groupName) {
