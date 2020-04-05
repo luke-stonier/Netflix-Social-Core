@@ -64,6 +64,12 @@ app.delete('/:groupName', async function (req, res) {
     res.sendStatus(200);
 });
 
+async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array);
+    }
+}
+
 async function GetBestServer() {
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = await MakeSqlQuery(getAllInstances);
@@ -71,34 +77,38 @@ async function GetBestServer() {
         return; // no available servers
 
     var groupInstances = [];
-    await instances.forEach(async (instance) => {
-        var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
-        var instanceData = await MakeSqlQuery(getInstanceData);
-        console.log("instance data-> " + JSON.stringify(instanceData));
-        if (instanceData && instanceData.length > 0) {
-            await instanceData.forEach(async (groupInstance) => {
-                console.log(`group instance adding to groupInstances`);
-                if (!groupInstances[groupInstance.address])
-                    groupInstances[groupInstance.address] = [];
 
-                groupInstances[groupInstance.address].push(groupInstance);
-            });
+    const filterResults = async () => {
+        await asyncForEach(instances, async (instance, index, array) => {
+            var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
+            var instanceData = await MakeSqlQuery(getInstanceData);
+            console.log("instance data-> " + JSON.stringify(instanceData));
+            if (instanceData && instanceData.length > 0) {
+                instanceData.forEach((groupInstance) => {
+                    console.log(`group instance adding to groupInstances`);
+                    if (!groupInstances[groupInstance.address])
+                        groupInstances[groupInstance.address] = [];
+
+                    groupInstances[groupInstance.address].push(groupInstance);
+                });
+            }
+        });
+
+        console.log("group instances ->" + JSON.stringify(groupInstances));
+
+        if (groupInstances.length == 0) {
+            console.log("No group instances to check");
+            return instances[0].address;
         }
-    });
 
-    console.log("group instances ->" + JSON.stringify(groupInstances));
-
-    if (groupInstances.length == 0) {
-        console.log("No group instances to check");
-        return instances[0].address;
+        // check for the instance with the smallest count and return the address
+        var smallestCountServer;
+        groupInstances.forEach((instance) => {
+            console.log(instance);
+        });
+        return `https://watch-hub.herokuapp.com`;
     }
-
-    // check for the instance with the smallest count and return the address
-    var smallestCountServer;
-    groupInstances.forEach((instance) => {
-        console.log(instance);
-    });
-    return `https://watch-hub.herokuapp.com`;
+    filterResults();
 }
 
 async function CreateGroup(groupName) {
