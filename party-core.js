@@ -66,6 +66,8 @@ app.delete('/:groupName', async function(req, res) {
 async function GetBestServer() {
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = MakeSqlQuery(getAllInstances);
+    console.log(JSON.stringify(instances));
+    return `https://watch-hub.herokuapp.com`;
     if (!instances || instances.length == 0) {
         // select a random one
         return `https://watch-hub.herokuapp.com`;
@@ -80,6 +82,7 @@ async function GetBestServer() {
 async function CreateGroup(groupName) {
     console.log(`Creating group ${groupName}`);
     var serverAddress = await GetBestServer();
+    return;
     var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
     await MakeSqlQuery(sql);
     return {
