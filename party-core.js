@@ -61,7 +61,7 @@ app.delete('/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
     if (!groupName) { res.sendStatus(400); return; }
     var remaining = await RemoveGroup(groupName);
-    res.sendStatus(remaining);
+    res.send(remaining);
 });
 
 async function asyncForEach(array, callback) {
