@@ -66,17 +66,24 @@ app.delete('/:groupName', async function(req, res) {
 async function GetBestServer() {
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = await MakeSqlQuery(getAllInstances);
-    console.log(JSON.stringify(instances));
-    return `https://watch-hub.herokuapp.com`;
     if (!instances || instances.length == 0) {
         // select a random one
         return `https://watch-hub.herokuapp.com`;
     }
-    instances.forEach(async (instance) => {
+    var groupInstances = [];
+    await instances.forEach(async (instance) => {
         var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
         var instanceData = await client.query(getInstanceData);
-        console.log(instanceData.rows);
+        instanceData.foreach(groupInstance => {
+            if (!groupInstances[groupInstance.address])
+                groupInstances[groupInstance.address] = [];
+
+            groupInstances[groupInstance.address].push(groupInstance);
+        });
     });
+
+    console.log(JSON.stringify(groupInstances));
+    return `https://watch-hub.herokuapp.com`;
 }
 
 async function CreateGroup(groupName) {
