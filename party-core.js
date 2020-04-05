@@ -74,7 +74,7 @@ app.delete('/:groupName', async function(req, res) {
 
 function GetBestServer(callback) {
     // var serverAddress = "https://watch-hub.herokuapp.com/";
-    var getAllInstances = `SELECT * FROM availableservers WHERE 1;`;
+    var getAllInstances = `SELECT * FROM availableservers;`;
     MakeSqlQuery(getAllInstances, (rows) => {
         console.log(JSON.stringify(rows));
         // callback();
