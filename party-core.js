@@ -93,6 +93,7 @@ async function GetBestServer() {
 
                 console.log(`push group instance to ${groupInstance.server}`);
                 groupInstances[groupInstance.server].push(groupInstance);
+                console.log("group instance in loop ->" + JSON.stringify(groupInstances));
             });
         }
     });
