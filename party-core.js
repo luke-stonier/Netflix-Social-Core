@@ -74,6 +74,7 @@ async function GetBestServer() {
     await instances.forEach(async (instance) => {
         var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
         var instanceData = await client.query(getInstanceData);
+        console.log(JSON.stringify(instanceData));
         instanceData.foreach(groupInstance => {
             if (!groupInstances[groupInstance.address])
                 groupInstances[groupInstance.address] = [];
