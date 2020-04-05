@@ -51,7 +51,7 @@ app.get('/:groupName', async function(req, res) {
     if (!groupName) { res.sendStatus(400); return; }
     console.log(`Get group name info for ${groupName}`);
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
-    await MakeSqlQuery(sql, (rows) => {
+    await MakeSqlQuery(sql, async (rows) => {
         if (!rows || rows.length == 0) {
             await CreateGroup(groupName, (row) => {
                 res.send(row);
@@ -75,7 +75,7 @@ app.delete('/:groupName', async function(req, res) {
 async function GetBestServer(callback) {
     // var serverAddress = "https://watch-hub.herokuapp.com/";
     var getAllInstances = `SELECT * FROM availableservers;`;
-    MakeSqlQuery(getAllInstances, (rows) => {
+    MakeSqlQuery(getAllInstances, async (rows) => {
         rows.forEach(element => {
             var getInstanceData = `SELECT * FROM groupinstances WHERE address='${element.address}';`;
             var instanceData = await client.query(getInstanceData);
@@ -87,7 +87,7 @@ async function GetBestServer(callback) {
 
 async function CreateGroup(groupName, callback) {
     console.log(`Creating group ${groupName}`);
-    await GetBestServer((serverAddress) => {
+    await GetBestServer(async(serverAddress) => {
         var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
         MakeSqlQuery(sql, (rows) => {
             callback({
