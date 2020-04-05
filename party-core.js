@@ -66,6 +66,10 @@ app.delete('/:groupName', async function(req, res) {
 async function GetBestServer() {
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = MakeSqlQuery(getAllInstances);
+    if (!instances || instances.length == 0) {
+        // select a random one
+        return `https://watch-hub.herokuapp.com`;
+    }
     instances.forEach(async (instance) => {
         var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
         var instanceData = await client.query(getInstanceData);
