@@ -77,7 +77,7 @@ async function GetBestServer(callback) {
     var getAllInstances = `SELECT * FROM availableservers;`;
     MakeSqlQuery(getAllInstances, async (rows) => {
         rows.forEach(async (element) => {
-            var getInstanceData = `SELECT * FROM groupinstances WHERE address='${element.address}';`;
+            var getInstanceData = `SELECT * FROM groupinstances WHERE server='${element.address}';`;
             var instanceData = await client.query(getInstanceData);
             console.log(instanceData);
         });
