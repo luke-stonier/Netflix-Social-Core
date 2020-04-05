@@ -74,8 +74,10 @@ async function GetBestServer() {
     await instances.forEach(async (instance) => {
         var getInstanceData = `SELECT * FROM groupinstances WHERE server='${instance.address}';`;
         var instanceData = await MakeSqlQuery(getInstanceData);
+        console.log("instance data-> " + JSON.stringify(instanceData));
         if (instanceData && instanceData.length > 0) {
             await instanceData.forEach(async (groupInstance) => {
+                console.log(`group instance adding to groupInstances`);
                 if (!groupInstances[groupInstance.address])
                     groupInstances[groupInstance.address] = [];
 
@@ -84,7 +86,10 @@ async function GetBestServer() {
         }
     });
 
+    console.log("group instances ->" + JSON.stringify(groupInstances));
+
     if (groupInstances.length == 0) {
+        console.log("No group instances to check");
         return instances[0].address;
     }
 
@@ -93,7 +98,6 @@ async function GetBestServer() {
     groupInstances.forEach((instance) => {
         console.log(instance);
     });
-    console.log(JSON.stringify(groupInstances));
     return `https://watch-hub.herokuapp.com`;
 }
 
