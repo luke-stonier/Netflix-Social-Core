@@ -75,8 +75,6 @@ async function GetBestServer() {
     var instances = await MakeSqlQuery(getAllInstances);
     if (!instances || instances.length == 0)
         return; // no available servers
-
-    console.log(`Instances available -> ${JSON.stringify(instances)}`);
     var groupInstances = {};
 
     await asyncForEach(instances, async (instance, index, array) => {
@@ -93,15 +91,11 @@ async function GetBestServer() {
                 }
 
                 groupInstances[addressKey]++;
-                console.log("group instance in loop ->" + JSON.stringify(groupInstances));
             });
         }
     });
 
-    console.log("group instances ->" + JSON.stringify(groupInstances));
-
     if (groupInstances.length == 0) {
-        console.log("No group instances to check");
         return instances[0].address;
     }
 
@@ -111,7 +105,6 @@ async function GetBestServer() {
         if (!smallestCountServer || groupInstances[instance] < smallestCountServer.count)
             smallestCountServer = { address: instance, count: groupInstances[instance]};
     });
-    console.log(smallestCountServer);
     return smallestCountServer.address;
 }
 
