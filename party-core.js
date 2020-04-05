@@ -60,8 +60,8 @@ app.get('/:groupName', async function (req, res) {
 app.delete('/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
     if (!groupName) { res.sendStatus(400); return; }
-    await RemoveGroup(groupName);
-    res.sendStatus(200);
+    var remaining = await RemoveGroup(groupName);
+    res.sendStatus(remaining);
 });
 
 async function asyncForEach(array, callback) {
@@ -132,6 +132,8 @@ async function SetClientCount(groupName, clietnCount) {
 async function RemoveGroup(groupname) {
     var sql = `DELETE FROM GroupInstances WHERE groupname='${groupname}';`;
     await MakeSqlQuery(sql);
+    var selectSQL = `SELECT * FROM GroupInstances;`;
+    return await MakeSqlQuery(selectSQL);
 }
 
 async function MakeSqlQuery(sql) {
