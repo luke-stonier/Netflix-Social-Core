@@ -41,17 +41,17 @@ app.post('/add', async function (req, res) {
 
 app.get('/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
-    if (!groupName) { res.sendStatus(400); return; }
+    if (!groupName || groupName == '') { res.sendStatus(400); return; }
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
-        console.log("Creating group as it doesnt exist");
+        console.log(`Creating group ${groupName} as it doesnt exist`);
         var group = await CreateGroup(groupName);
         res.send(group);
         return;
     }
 
-    console.log("Returning group info");
+    console.log(`Returning group info for ${groupName}`);
     var groupInstance = rows[0];
     res.send(groupInstance);
 });
