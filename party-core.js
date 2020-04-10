@@ -68,7 +68,8 @@ app.get('/ping', async function(req, res) {
         }
     
         request(options, function (err, res, body) {
-            if (err) { }
+            if (err) 
+                console.error(`${instance.address} is not running`);
             if (res.statusCode == 200) {
                 console.log(`${instance.address} is running.`);
             }
