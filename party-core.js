@@ -58,6 +58,7 @@ app.get('/group/:groupName', async function (req, res) {
 
 app.get('/ping', async function(req, res) {
     // ping all of the available servers
+    console.log("Got ping, checking servers");
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = await MakeSqlQuery(getAllInstances);
     await asyncForEach(instances, async (instance, index, array) => {
