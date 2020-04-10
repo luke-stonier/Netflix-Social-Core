@@ -2,6 +2,7 @@ const express = require('express');
 const { Client } = require('pg');
 const app = express();
 const bodyParser = require('body-parser');
+const request = require('request');
 const secureConnectionString = process.env.DATABASE_URL || 'postgres://dotjltonbuuogh:6cf0a45121c8faf9e36872b95a04b99c9829d1718e8e29dd5b243102c86bb320@ec2-54-247-78-30.eu-west-1.compute.amazonaws.com:5432/d5ugoj4cvigbbi';
 const PORT = process.env.PORT || 3001
 
@@ -53,6 +54,26 @@ app.get('/:groupName', async function (req, res) {
     console.log("Returning group info");
     var groupInstance = rows[0];
     res.send(groupInstance);
+});
+
+app.get('/ping', async function(req, res) {
+    // ping all of the available servers
+    var getAllInstances = `SELECT * FROM availableservers;`;
+    var instances = await MakeSqlQuery(getAllInstances);
+    await asyncForEach(instances, async (instance, index, array) => {
+        var options = {
+            uri: `https://${instance.address}/ping`,
+            method: 'GET'
+        }
+    
+        request(options, function (err, res, body) {
+            if (err) { }
+            if (res.statusCode == 200) {
+                console.log(`${instance.address} is running.`);
+            }
+        });
+    });
+    res.sendStatus(200);
 });
 
 app.delete('/:groupName', async function (req, res) {
