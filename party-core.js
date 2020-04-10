@@ -21,6 +21,8 @@ app.listen(PORT, () => {
 
     client.connect().then(() => {
         console.log('SQL client connected');
+        var removeSql = `DELETE FROM GroupInstances;`;
+        await MakeSqlQuery(removeSql);
     }).catch((error) => {
         console.log(error);
     });
@@ -29,6 +31,10 @@ app.listen(PORT, () => {
 app.post('/add', async function (req, res) {
     var WatchHubAddress = req.body.address;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
+    // remove all old groups
+    var removeSql = `DELETE FROM GroupInstances WHERE server='${WatchHubAddress}';`;
+    await MakeSqlQuery(removeSql);
+
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
