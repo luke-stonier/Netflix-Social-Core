@@ -19,7 +19,7 @@ const client = new Client({
 app.listen(PORT, () => {
     console.log((new Date()) + ' Server is listening on port ' + PORT);
 
-    client.connect().then(() => {
+    client.connect().then(async () => {
         console.log('SQL client connected');
         var removeSql = `DELETE FROM GroupInstances;`;
         await MakeSqlQuery(removeSql);
