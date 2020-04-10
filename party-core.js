@@ -39,7 +39,7 @@ app.post('/add', async function (req, res) {
     res.sendStatus(200);
 });
 
-app.get('/:groupName', async function (req, res) {
+app.get('/group/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
