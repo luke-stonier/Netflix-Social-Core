@@ -26,19 +26,19 @@ app.listen(PORT, () => {
     });
 });
 
-app.get('/get-server-list', async function(req, res) {
+app.get('/get-server-list', async function (req, res) {
     var getAllServers = `SELECT * FROM availableservers;`;
     var rows = await MakeSqlQuery(getAllServers);
     res.send(rows);
 });
 
-app.get('/get-group-list', async function(req, res) {
+app.get('/get-group-list', async function (req, res) {
     var getAllGroups = `SELECT * FROM groupinstances;`;
     var rows = await MakeSqlQuery(getAllGroups);
     res.send(rows);
 });
 
-app.get('/clear-group-list', async function(req, res) {
+app.get('/clear-group-list', async function (req, res) {
     var removeSql = `DELETE FROM GroupInstances;`;
     await MakeSqlQuery(removeSql);
     res.sendStatus(200);
@@ -48,19 +48,18 @@ app.post('/add', async function (req, res) {
     var WatchHubAddress = req.body.address;
     var is_dev = req.body.is_dev;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
+
     // remove all old groups
     var removeSql = `DELETE FROM GroupInstances WHERE server='${WatchHubAddress}';`;
     await MakeSqlQuery(removeSql);
 
-    var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
-    var rows = await MakeSqlQuery(sql);
-    if (!rows || rows.length == 0) {
-        var addSQL = `INSERT INTO availableservers (address, is_dev) VALUES ('${WatchHubAddress}', '${is_dev}');`;
-        await MakeSqlQuery(addSQL);
-    } else {
-        var updateSQL = `UPDATE availableservers SET (is_dev) = ('${is_dev}') WHERE address = '${WatchHubAddress}';`;
-        await MakeSqlQuery(updateSQL);
-    }
+    // remove old record
+    var removeSql = `DELETE FROM availableservers WHERE address='${WatchHubAddress}';`;
+    await MakeSqlQuery(removeSql);
+
+    // add new record
+    var addSQL = `INSERT INTO availableservers (address, is_dev) VALUES ('${WatchHubAddress}', '${is_dev}');`;
+    await MakeSqlQuery(addSQL);
 
     res.sendStatus(200);
 });
@@ -82,7 +81,7 @@ app.get('/group/:groupName', async function (req, res) {
     res.send(groupInstance);
 });
 
-app.get('/ping', async function(req, res) {
+app.get('/ping', async function (req, res) {
     // ping all of the available servers
     console.log("Got ping, checking servers");
     var getAllInstances = `SELECT * FROM availableservers;`;
@@ -92,9 +91,9 @@ app.get('/ping', async function(req, res) {
             uri: `https://${instance.address}/ping`,
             method: 'GET'
         }
-    
+
         request(options, function (err, res, body) {
-            if (err) 
+            if (err)
                 console.error(`${instance.address} is not running`);
             if (res.statusCode == 200) {
                 console.log(`${instance.address} is running.`);
@@ -150,7 +149,7 @@ async function GetBestServer() {
     var smallestCountServer;
     Object.keys(groupInstances).forEach((instance) => {
         if (!smallestCountServer || groupInstances[instance] < smallestCountServer.count)
-            smallestCountServer = { address: instance, count: groupInstances[instance]};
+            smallestCountServer = { address: instance, count: groupInstances[instance] };
     });
     return smallestCountServer.address;
 }
