@@ -64,9 +64,9 @@ app.post('/add', async function (req, res) {
     res.sendStatus(200);
 });
 
-app.get('/group/:groupName/:is_dev', async function (req, res) {
+app.get('/group/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
-    var is_dev = req.params.is_dev | false;
+    var is_dev = false;
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = await MakeSqlQuery(sql);
