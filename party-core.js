@@ -28,6 +28,12 @@ app.listen(PORT, () => {
     });
 });
 
+app.get('/get-server-list', async function(req, res) {
+    var getAlLServers = `SELECT * FROM availableservers;`;
+    var rows = await MakeSqlQuery(getAlLServers);
+    res.send(rows);
+});
+
 app.post('/add', async function (req, res) {
     var WatchHubAddress = req.body.address;
     var is_dev = req.body.is_dev;
