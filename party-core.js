@@ -64,14 +64,15 @@ app.post('/add', async function (req, res) {
     res.sendStatus(200);
 });
 
-app.get('/group/:groupName', async function (req, res) {
+app.get('/group/:groupName/:is_dev', async function (req, res) {
     var groupName = req.params.groupName;
+    var is_dev = req.params.is_dev | false;
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         console.log(`Creating group ${groupName} as it doesnt exist`);
-        var group = await CreateGroup(groupName);
+        var group = await CreateGroup(groupName, is_dev);
         res.send(group);
         return;
     }
@@ -116,8 +117,8 @@ async function asyncForEach(array, callback) {
     }
 }
 
-async function GetBestServer() {
-    var getAllInstances = `SELECT * FROM availableservers WHERE is_dev = false;`;
+async function GetBestServer(is_dev) {
+    var getAllInstances = `SELECT * FROM availableservers WHERE is_dev = ${is_dev};`;
     var instances = await MakeSqlQuery(getAllInstances);
     if (!instances || instances.length == 0)
         return; // no available servers
@@ -154,8 +155,8 @@ async function GetBestServer() {
     return smallestCountServer.address;
 }
 
-async function CreateGroup(groupName) {
-    var serverAddress = await GetBestServer();
+async function CreateGroup(groupName, is_dev) {
+    var serverAddress = await GetBestServer(is_Dev);
     console.log(`Using ${serverAddress} for group ${groupName}`);
     var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
     await MakeSqlQuery(sql);
