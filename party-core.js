@@ -30,6 +30,7 @@ app.listen(PORT, () => {
 
 app.post('/add', async function (req, res) {
     var WatchHubAddress = req.body.address;
+    var is_dev = req.body.is_dev;
     if (!WatchHubAddress) { res.sendStatus(400); return; }
     // remove all old groups
     var removeSql = `DELETE FROM GroupInstances WHERE server='${WatchHubAddress}';`;
@@ -38,7 +39,7 @@ app.post('/add', async function (req, res) {
     var sql = `SELECT * FROM availableservers WHERE address='${WatchHubAddress}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
-        var addSQL = `INSERT INTO availableservers (address) VALUES ('${WatchHubAddress}');`;
+        var addSQL = `INSERT INTO availableservers (address, is_dev) VALUES ('${WatchHubAddress}', '${is_dev}');`;
         await MakeSqlQuery(addSQL)
     }
 
@@ -98,7 +99,7 @@ async function asyncForEach(array, callback) {
 }
 
 async function GetBestServer() {
-    var getAllInstances = `SELECT * FROM availableservers;`;
+    var getAllInstances = `SELECT * FROM availableservers WHERE is_dev = false;`;
     var instances = await MakeSqlQuery(getAllInstances);
     if (!instances || instances.length == 0)
         return; // no available servers
