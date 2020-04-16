@@ -46,6 +46,7 @@ app.post('/add', async function (req, res) {
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var addSQL = `INSERT INTO availableservers (address, is_dev) VALUES ('${WatchHubAddress}', '${is_dev}');`;
+        console.log(`sql to add server to db -> ${addSQL}`);
         await MakeSqlQuery(addSQL)
     }
 
