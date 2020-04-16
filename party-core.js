@@ -21,17 +21,27 @@ app.listen(PORT, () => {
 
     client.connect().then(async () => {
         console.log('SQL client connected');
-        var removeSql = `DELETE FROM GroupInstances;`;
-        await MakeSqlQuery(removeSql);
     }).catch((error) => {
         console.log(error);
     });
 });
 
 app.get('/get-server-list', async function(req, res) {
-    var getAlLServers = `SELECT * FROM availableservers;`;
-    var rows = await MakeSqlQuery(getAlLServers);
+    var getAllServers = `SELECT * FROM availableservers;`;
+    var rows = await MakeSqlQuery(getAllServers);
     res.send(rows);
+});
+
+app.get('/get-group-list', async function(req, res) {
+    var getAllGroups = `SELECT * FROM groupinstances;`;
+    var rows = await MakeSqlQuery(getAllGroups);
+    res.send(rows);
+});
+
+app.get('/clear-group-list', async function(req, res) {
+    var removeSql = `DELETE FROM GroupInstances;`;
+    await MakeSqlQuery(removeSql);
+    res.sendStatus(200);
 });
 
 app.post('/add', async function (req, res) {
@@ -46,8 +56,10 @@ app.post('/add', async function (req, res) {
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var addSQL = `INSERT INTO availableservers (address, is_dev) VALUES ('${WatchHubAddress}', '${is_dev}');`;
-        console.log(`sql to add server to db -> ${addSQL}`);
-        await MakeSqlQuery(addSQL)
+        await MakeSqlQuery(addSQL);
+    } else {
+        var updateSQL = `UPDATE availableservers SET (is_dev) = ('${is_dev}') WHERE address = '${WatchHubAddress}';`;
+        await MakeSqlQuery(updateSQL);
     }
 
     res.sendStatus(200);
