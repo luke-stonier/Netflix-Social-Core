@@ -82,6 +82,13 @@ app.get('/group/:groupName', async function (req, res) {
     res.send(groupInstance);
 });
 
+app.delete('/group/:groupName', async function (req, res) {
+    var groupName = req.params.groupName;
+    if (!groupName) { res.sendStatus(400); return; }
+    var remaining = await RemoveGroup(groupName);
+    res.send(remaining);
+});
+
 app.get('/ping', async function (req, res) {
     // ping all of the available servers
     console.log("Got ping, checking servers");
@@ -102,13 +109,6 @@ app.get('/ping', async function (req, res) {
         });
     });
     res.sendStatus(200);
-});
-
-app.delete('/:groupName', async function (req, res) {
-    var groupName = req.params.groupName;
-    if (!groupName) { res.sendStatus(400); return; }
-    var remaining = await RemoveGroup(groupName);
-    res.send(remaining);
 });
 
 async function asyncForEach(array, callback) {
@@ -156,7 +156,7 @@ async function GetBestServer(is_dev) {
 }
 
 async function CreateGroup(groupName, is_dev) {
-    var serverAddress = await GetBestServer(is_Dev);
+    var serverAddress = await GetBestServer(is_dev);
     console.log(`Using ${serverAddress} for group ${groupName}`);
     var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
     await MakeSqlQuery(sql);
