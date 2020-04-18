@@ -67,17 +67,19 @@ app.post('/add', async function (req, res) {
 app.get('/group/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
     var is_dev = req.header('develop_key') == 'develop';
-    console.log(`get group info for ${groupName} > dev = ${is_dev}`);
+    console.log(`get group info for ${groupName} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var group = await CreateGroup(groupName, is_dev);
+        console.log(`Return group -> ${group}`)
         res.send(group);
         return;
     }
 
     var groupInstance = rows[0];
+    console.log(`Return group -> ${groupInstance}`)
     res.send(groupInstance);
 });
 
