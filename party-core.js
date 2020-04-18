@@ -73,13 +73,13 @@ app.get('/group/:groupName', async function (req, res) {
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var group = await CreateGroup(groupName, is_dev);
-        console.log(`Return group -> ${JSON.stringify(group)}`)
+        console.log(`Return group -> ${JSON.stringify(group)}`);
         res.send(group);
         return;
     }
 
     var groupInstance = rows[0];
-    console.log(`Return group -> ${JSON.stringify(groupInstance)}`)
+    console.log(`Return group -> ${JSON.stringify(groupInstance)}`);
     res.send(groupInstance);
 });
 
