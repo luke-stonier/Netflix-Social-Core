@@ -109,6 +109,13 @@ app.get('/ping', async function (req, res) {
             }
         });
     });
+
+    var getAllGroups = `SELECT * FROM groupinstances;`;
+    var rows = await MakeSqlQuery(getAllGroups);
+    rows.forEach(element => {
+        console.log(element);
+    });
+
     res.sendStatus(200);
 });
 
