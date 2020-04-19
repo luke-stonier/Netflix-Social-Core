@@ -110,10 +110,11 @@ app.get('/ping', async function (req, res) {
         });
     });
 
+    console.log("groups running --->");
     var getAllGroups = `SELECT * FROM groupinstances;`;
     var rows = await MakeSqlQuery(getAllGroups);
     rows.forEach(element => {
-        console.log(element);
+        console.log(`--> ${element.groupName} - ${element.server}`);
     });
 
     res.sendStatus(200);
