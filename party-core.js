@@ -100,16 +100,10 @@ app.get('/ping', async function (req, res) {
     rows.forEach(element => {
         console.log(`--> ${element.groupname} - ${element.server}`);
     });
-    console.log("<---- END");
 
     console.log("servers running --->");
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = await MakeSqlQuery(getAllInstances);
-    callback = () => {
-        console.log("<---- END");
-    }
-    if (!instances || instances.length == 0)
-        callback();
     instances.forEach((instance, index) => {
         var options = {
             uri: `https://${instance.address}/ping`,
@@ -124,9 +118,6 @@ app.get('/ping', async function (req, res) {
             } else {
                 console.log(`--> ${res.body}`);
             }
-
-            if (index == instances.length - 1)
-                callback();
         });
     });
 
