@@ -6,6 +6,13 @@ const request = require('request');
 const secureConnectionString = process.env.DATABASE_URL || 'postgres://dotjltonbuuogh:6cf0a45121c8faf9e36872b95a04b99c9829d1718e8e29dd5b243102c86bb320@ec2-54-247-78-30.eu-west-1.compute.amazonaws.com:5432/d5ugoj4cvigbbi';
 const PORT = process.env.PORT || 3001
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "https://netflix-social.com");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+  
+
 app.use(bodyParser.json());
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" // Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
