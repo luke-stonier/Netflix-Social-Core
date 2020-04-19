@@ -105,13 +105,21 @@ app.get('/ping', async function (req, res) {
     console.log("servers running --->");
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = await MakeSqlQuery(getAllInstances);
-    instances.forEach(instance => {
+    callback = () => {
+        console.log("<----");
+    }
+    if (!instances || instances.length == 0)
+        callback();
+    instances.forEach((instance, index) => {
         var options = {
             uri: `https://${instance.address}/ping`,
             method: 'GET'
         }
 
         request(options, function (err, res, body) {
+            if (index == instances.length - 1)
+                callback();
+
             if (err)
                 console.error(`--> ${instance.address} is not running`);
             if (res.statusCode == 200) {
@@ -119,7 +127,6 @@ app.get('/ping', async function (req, res) {
             }
         });
     });
-    console.log("<----");
 
     res.sendStatus(200);
 });
