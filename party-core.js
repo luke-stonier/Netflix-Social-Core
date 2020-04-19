@@ -117,14 +117,16 @@ app.get('/ping', async function (req, res) {
         }
 
         request(options, function (err, res, body) {
-            if (index == instances.length)
-                callback();
-
             if (err)
                 console.error(`--> ${instance.address} is not running`);
             if (res.statusCode == 200) {
                 console.log(`--> ${instance.address} is running.`);
+            } else {
+                console.log(`--> ${res.body}`);
             }
+
+            if (index == instances.length - 1)
+                callback();
         });
     });
 
