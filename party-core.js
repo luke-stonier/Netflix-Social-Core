@@ -93,6 +93,15 @@ app.delete('/group/:groupName', async function (req, res) {
 app.get('/ping', async function (req, res) {
     // ping all of the available servers
     console.log("Got ping, checking servers");
+
+    console.log("groups running --->");
+    var getAllGroups = `SELECT * FROM groupinstances;`;
+    var rows = await MakeSqlQuery(getAllGroups);
+    rows.forEach(element => {
+        console.log(`--> ${element.groupname} - ${element.server}`);
+    });
+    console.log("<----");
+
     var getAllInstances = `SELECT * FROM availableservers;`;
     var instances = await MakeSqlQuery(getAllInstances);
     await asyncForEach(instances, async (instance, index, array) => {
@@ -108,13 +117,6 @@ app.get('/ping', async function (req, res) {
                 console.log(`${instance.address} is running.`);
             }
         });
-    });
-
-    console.log("groups running --->");
-    var getAllGroups = `SELECT * FROM groupinstances;`;
-    var rows = await MakeSqlQuery(getAllGroups);
-    rows.forEach(element => {
-        console.log(`--> ${element.groupname} - ${element.server}`);
     });
 
     res.sendStatus(200);
