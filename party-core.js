@@ -91,7 +91,7 @@ app.get('/group/:groupName', async function (req, res) {
     }
 
     var groupInstance = rows[0];
-    if (groupInstance.groupkey != groupKey) {
+    if (groupInstance.groupkey && groupInstance.groupkey != groupKey) {
         res.sendStatus(403);
         return;
     }
