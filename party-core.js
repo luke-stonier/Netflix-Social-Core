@@ -91,7 +91,10 @@ app.get('/group/:groupName', async function (req, res) {
     }
 
     var groupInstance = rows[0];
-    // AND GroupKey='${groupKey}'
+    if (groupInstance.groupKey != groupKey) {
+        res.sendStatus(403);
+        return;
+    }
     console.log(`Return group -> ${JSON.stringify(groupInstance)}`);
     res.send(groupInstance);
 });
