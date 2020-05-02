@@ -77,7 +77,7 @@ app.get('/group/:groupName', async function (req, res) {
     var is_dev = req.header('develop_key') == 'develop';
     var groupKey = req.header('group-key');
     if (groupKey)
-        groupKey = crypto.createHash('md5').update(groupKey).digest('hex');
+        groupKey = crypto.createHash('md5').update(`${groupName}${groupKey}`).digest('hex');
 
     console.log(`get group info for ${groupName} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
