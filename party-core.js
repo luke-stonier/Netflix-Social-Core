@@ -79,7 +79,7 @@ app.get('/group/:groupName', async function (req, res) {
     if (groupKey)
         groupKey = crypto.createHash('md5').update(groupKey).digest('hex');
 
-    console.log(`get group info for ${groupName}  with key: ${groupKey} -> dev = ${is_dev}`);
+    console.log(`get group info for ${groupName} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
     var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = await MakeSqlQuery(sql);
