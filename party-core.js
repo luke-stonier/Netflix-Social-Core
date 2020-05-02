@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const { Client } = require('pg');
 const app = express();
 const bodyParser = require('body-parser');
@@ -74,12 +75,16 @@ app.post('/add', async function (req, res) {
 app.get('/group/:groupName', async function (req, res) {
     var groupName = req.params.groupName;
     var is_dev = req.header('develop_key') == 'develop';
+    var groupKey = req.header('group-key');
+    if (groupKey)
+        groupKey = crypto.createHash('md5').update(groupKey).digest('hex');
+
     console.log(`get group info for ${groupName} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
-    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
+    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}' AND GroupKey='${groupKey}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
-        var group = await CreateGroup(groupName, is_dev);
+        var group = await CreateGroup(groupName, groupKey, is_dev);
         console.log(`Return group -> ${JSON.stringify(group)}`);
         res.send(group);
         return;
@@ -175,10 +180,10 @@ async function GetBestServer(is_dev) {
     return smallestCountServer.address;
 }
 
-async function CreateGroup(groupName, is_dev) {
+async function CreateGroup(groupName, groupKey, is_dev) {
     var serverAddress = await GetBestServer(is_dev);
     console.log(`Using ${serverAddress} for group ${groupName}`);
-    var sql = `INSERT INTO GroupInstances (GroupName, server, clients) VALUES ('${groupName}', '${serverAddress}', 0);`;
+    var sql = `INSERT INTO GroupInstances (GroupName, GroupKey, server, clients) VALUES ('${groupName}', '${groupKey}','${serverAddress}', 0);`;
     await MakeSqlQuery(sql);
     return {
         groupname: groupName,
