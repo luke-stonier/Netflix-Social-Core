@@ -81,10 +81,8 @@ app.get('/group/:groupName', async function (req, res) {
 
     console.log(`get group info for ${groupName}  with key: ${groupKey} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
-    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}' AND GroupKey='${groupKey}';`;
-    console.log(sql);
+    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
     var rows = await MakeSqlQuery(sql);
-    console.log(JSON.stringify(rows));
     if (!rows || rows.length == 0) {
         var group = await CreateGroup(groupName, groupKey, is_dev);
         console.log(`Return group -> ${JSON.stringify(group)}`);
@@ -93,6 +91,7 @@ app.get('/group/:groupName', async function (req, res) {
     }
 
     var groupInstance = rows[0];
+    // AND GroupKey='${groupKey}'
     console.log(`Return group -> ${JSON.stringify(groupInstance)}`);
     res.send(groupInstance);
 });
