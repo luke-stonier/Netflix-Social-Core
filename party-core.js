@@ -95,6 +95,7 @@ app.get('/group/:groupName', async function (req, res) {
         res.sendStatus(403);
         return;
     }
+    delete groupInstance.groupkey;
     console.log(`Return group -> ${JSON.stringify(groupInstance)}`);
     res.send(groupInstance);
 });
