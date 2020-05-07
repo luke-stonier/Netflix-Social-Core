@@ -58,6 +58,7 @@ app.post('/log', async function (req, res) {
     var logSql = `INSERT INTO Logs (log) VALUES ('${logData}');`;
     // run sql command
     await MakeSqlQuery(logSql);
+    res.sendStatus(204);
 });
 
 app.get('/logs', async function (req, res) {
