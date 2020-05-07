@@ -53,12 +53,7 @@ app.get('/clear-group-list', async function (req, res) {
 });
 
 app.post('/log', async function (req, res) {
-    // Add logging
-    var logData = "Test Log";
-    var logSql = `INSERT INTO Logs (log) VALUES ('${logData}');`;
-    // run sql command
-    await MakeSqlQuery(logSql);
-    res.sendStatus(204);
+    createLog(req.body.log);
 });
 
 app.get('/logs', async function (req, res) {
@@ -100,6 +95,7 @@ app.get('/group/:groupName', async function (req, res) {
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var group = await CreateGroup(groupName, groupKey, is_dev);
+        createLog(`Created group ${JSON.stringify(group)}`);
         console.log(`Return group -> ${JSON.stringify(group)}`);
         res.send(group);
         return;
@@ -155,6 +151,12 @@ app.get('/ping', async function (req, res) {
 
     res.sendStatus(200);
 });
+
+async function createLog(log) {
+    var logSql = `INSERT INTO Logs (log) VALUES ('${log}');`;
+    await MakeSqlQuery(logSql);
+    res.sendStatus(204);
+}
 
 async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
