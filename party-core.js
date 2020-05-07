@@ -55,7 +55,7 @@ app.get('/clear-group-list', async function (req, res) {
 app.post('/log', async function (req, res) {
     // Add logging
     var logData = "Test Log";
-    var logSql = `INSERT INTO Logs (Log) VALUES ('${logData}');`;
+    var logSql = `INSERT INTO Logs (log) VALUES ('${logData}');`;
     // run sql command
     await MakeSqlQuery(logSql);
 });
