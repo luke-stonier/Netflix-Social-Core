@@ -52,6 +52,20 @@ app.get('/clear-group-list', async function (req, res) {
     res.sendStatus(200);
 });
 
+app.post('/log', async function (req, res) {
+    // Add logging
+    var logData = "Test Log";
+    var logSql = `INSERT INTO Logs (Log) VALUES ('${logData}');`;
+    // run sql command
+    await MakeSqlQuery(logSql);
+});
+
+app.get('/logs', async function (req, res) {
+    var logSql = `SELECT * FROM Logs;`;
+    var rows = await MakeSqlQuery(logSql);
+    res.send(rows);
+});
+
 app.post('/add', async function (req, res) {
     var WatchHubAddress = req.body.address;
     var is_dev = req.body.is_dev;
