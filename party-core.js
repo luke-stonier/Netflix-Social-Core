@@ -213,16 +213,14 @@ async function CreateGroup(groupName, groupKey, is_dev) {
     var sql = `INSERT INTO GroupInstances (GroupName, GroupKey, server, clients, GroupId) VALUES ('${groupName}', '${groupKey}','${serverAddress}', 0, '${groupId}');`;
     await MakeSqlQuery(sql);
     return {
-        // groupid: groupId,
-        groupname: groupId,
+        groupid: groupId,
+        groupname: groupName,
         server: serverAddress,
         clients: 0
     };
 }
 
-async function SetClientCount(groupName, clietnCount) {
-
-}
+async function SetClientCount(groupName, clietnCount) { }
 
 async function RemoveGroup(groupId) {
     var sql = `DELETE FROM GroupInstances WHERE GroupId='${groupId}';`;
