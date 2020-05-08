@@ -59,6 +59,10 @@ app.post('/log', async function (req, res) {
 app.get('/logs', async function (req, res) {
     var logSql = `SELECT * FROM Logs;`;
     var rows = await MakeSqlQuery(logSql);
+
+    var removeSql = `DELETE FROM Logs;`;
+    await MakeSqlQuery(removeSql);
+
     res.send(rows);
 });
 
