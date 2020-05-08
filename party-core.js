@@ -213,8 +213,8 @@ async function CreateGroup(groupName, groupKey, is_dev) {
     var sql = `INSERT INTO GroupInstances (GroupName, GroupKey, server, clients, GroupId) VALUES ('${groupName}', '${groupKey}','${serverAddress}', 0, '${groupId}');`;
     await MakeSqlQuery(sql);
     return {
-        groupid: groupId,
-        groupname: groupName,
+        // groupid: groupId,
+        groupname: groupId,
         server: serverAddress,
         clients: 0
     };
