@@ -95,7 +95,7 @@ app.get('/group/:groupName', async function (req, res) {
 
     console.log(`get group info for ${groupName} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
-    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
+    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}${groupKey}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var group = await CreateGroup(groupName, groupKey, is_dev);
@@ -209,6 +209,7 @@ async function GetBestServer(is_dev) {
 async function CreateGroup(groupName, groupKey, is_dev) {
     var serverAddress = await GetBestServer(is_dev);
     console.log(`Using ${serverAddress} for group ${groupName}`);
+    groupName = `${groupName}${groupKey}`;
     var sql = `INSERT INTO GroupInstances (GroupName, GroupKey, server, clients) VALUES ('${groupName}', '${groupKey}','${serverAddress}', 0);`;
     await MakeSqlQuery(sql);
     return {
