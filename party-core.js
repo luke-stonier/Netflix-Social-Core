@@ -96,7 +96,7 @@ app.get('/group/:groupName', async function (req, res) {
 
     console.log(`get group info for ${groupName} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
-    var sql = `SELECT * FROM GroupInstances WHERE groupname='${groupName}';`;
+    var sql = `SELECT * FROM GroupInstances WHERE GroupId='${groupName}${groupkey}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var group = await CreateGroup(groupName, groupKey, is_dev);
@@ -116,10 +116,10 @@ app.get('/group/:groupName', async function (req, res) {
     res.send(groupInstance);
 });
 
-app.delete('/group/:groupName', async function (req, res) {
-    var groupName = req.params.groupName;
-    if (!groupName) { res.sendStatus(400); return; }
-    var remaining = await RemoveGroup(groupName);
+app.delete('/group/:groupId', async function (req, res) {
+    var groupId = req.params.groupId;
+    if (!groupId) { res.sendStatus(400); return; }
+    var remaining = await RemoveGroup(groupId);
     res.send(remaining);
 });
 
@@ -209,10 +209,11 @@ async function GetBestServer(is_dev) {
 async function CreateGroup(groupName, groupKey, is_dev) {
     var serverAddress = await GetBestServer(is_dev);
     console.log(`Using ${serverAddress} for group ${groupName}`);
-    // groupName = `${groupName}${groupKey}`;
-    var sql = `INSERT INTO GroupInstances (GroupName, GroupKey, server, clients) VALUES ('${groupName}', '${groupKey}','${serverAddress}', 0);`;
+    var groupId = `${groupName}${groupKey}`;
+    var sql = `INSERT INTO GroupInstances (GroupName, GroupKey, server, clients, GroupId) VALUES ('${groupName}', '${groupKey}','${serverAddress}', 0, '${groupId}');`;
     await MakeSqlQuery(sql);
     return {
+        groupid: groupId,
         groupname: groupName,
         server: serverAddress,
         clients: 0
@@ -223,8 +224,8 @@ async function SetClientCount(groupName, clietnCount) {
 
 }
 
-async function RemoveGroup(groupname) {
-    var sql = `DELETE FROM GroupInstances WHERE groupname='${groupname}';`;
+async function RemoveGroup(groupId) {
+    var sql = `DELETE FROM GroupInstances WHERE GroupId='${groupId}';`;
     await MakeSqlQuery(sql);
     var selectSQL = `SELECT * FROM GroupInstances;`;
     return await MakeSqlQuery(selectSQL);
