@@ -96,7 +96,7 @@ app.get('/group/:groupName', async function (req, res) {
 
     console.log(`get group info for ${groupName} -> dev = ${is_dev}`);
     if (!groupName || groupName == '') { res.sendStatus(400); return; }
-    var sql = `SELECT * FROM GroupInstances WHERE GroupId='${groupName}${groupkey}';`;
+    var sql = `SELECT * FROM GroupInstances WHERE GroupId='${groupName}${groupKey}';`;
     var rows = await MakeSqlQuery(sql);
     if (!rows || rows.length == 0) {
         var group = await CreateGroup(groupName, groupKey, is_dev);
