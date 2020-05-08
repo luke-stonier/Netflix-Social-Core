@@ -54,6 +54,7 @@ app.get('/clear-group-list', async function (req, res) {
 
 app.post('/log', async function (req, res) {
     createLog(req.body.log);
+    res.sendStatus(204);
 });
 
 app.get('/logs', async function (req, res) {
@@ -159,7 +160,6 @@ app.get('/ping', async function (req, res) {
 async function createLog(log) {
     var logSql = `INSERT INTO Logs (log) VALUES ('${log}');`;
     await MakeSqlQuery(logSql);
-    res.sendStatus(204);
 }
 
 async function asyncForEach(array, callback) {
